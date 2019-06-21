@@ -18,7 +18,8 @@ const _import = require('./import-' + process.env.NODE_ENV)
 // 全局路由(无需嵌套上左右整体布局)
 const globalRoutes = [
   { path: '/404', component: _import('common/404'), name: '404', meta: { title: '404未找到' } },
-  { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } }
+  { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } },
+  { path: '/403', component: _import('common/login'), name: 'login', meta: { title: '登录' } }
 ]
 
 // 主入口路由(需嵌套上左右整体布局)
@@ -35,12 +36,10 @@ const mainRoutes = {
     // 提示: 如需要通过iframe嵌套展示内容, 但不通过tab打开, 请自行创建组件使用iframe处理!
     { path: '/home', component: _import('common/home'), name: 'home', meta: { title: '首页' } },
     { path: '/theme', component: _import('common/theme'), name: 'theme', meta: { title: '主题' } },
-    // { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts',
-    //   meta: { title: 'demo-echarts', isTab: true } },
-    // { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor',
-    //  meta: { title: 'demo-ueditor', isTab: true } },
-    { path: '/admin-list', component: _import('modules/sys/user'), name: 'admin-list', meta: { title: '奖品管理', isTab: true } },
-    { path: '/role-list', component: _import('modules/sys/role'), name: 'role-list', meta: { title: '活动管理', isTab: true } }
+    { path: '/prize-list', component: _import('modules/prize/prize'), name: 'prize-list', meta: { title: '奖品管理', isTab: true } },
+    { path: '/activity-list', component: _import('modules/activity/activity'), name: 'activity-list', meta: { title: '活动管理', isTab: true } },
+    // { path: '/activity-address-list', component: _import('modules/activityAddress/activityAddress'), name: 'activity-address-list', meta: { title: '活动地址管理', isTab: true } },
+    // { path: '/activity-prize-ref', component: _import('modules/activityPrizeRef/activityPrizeRefList'), name: 'activity-prize-ref', meta: { title: '活动奖品映射', isTab: true } }
   ],
   beforeEnter (to, from, next) {
     let token = Vue.cookie.get('token')
@@ -66,26 +65,26 @@ router.beforeEach((to, from, next) => {
   if (router.options.isAddDynamicMenuRoutes || fnCurrentRouteType(to, globalRoutes) === 'global') {
     next()
   } else {
-    http({
-      url: http.adornUrl('/sys/menu/nav'),
-      method: 'get',
-      params: http.adornParams()
-    }).then(({data}) => {
-      if (data && data.code === 0) {
-        fnAddDynamicMenuRoutes(data.menuList)
-        router.options.isAddDynamicMenuRoutes = true
-        sessionStorage.setItem('menuList', JSON.stringify(data.menuList || '[]'))
-        sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
-        next({ ...to, replace: true })
-      } else {
-        sessionStorage.setItem('menuList', '[]')
-        sessionStorage.setItem('permissions', '[]')
-        next()
-      }
-    }).catch((e) => {
-      console.log(`%c${e} 请求菜单列表和权限失败，跳转至登录页！！`, 'color:blue')
-      router.push({ name: 'login' })
-    })
+    // http({
+    //   url: http.adornUrl('/exchange-code/sys/menu/nav'),
+    //   method: 'get',
+    //   params: http.adornParams()
+    // }).then(({data}) => {
+    //   if (data && data.code === 0) {
+    //     fnAddDynamicMenuRoutes(data.menuList)
+    //     router.options.isAddDynamicMenuRoutes = true
+    //     sessionStorage.setItem('menuList', JSON.stringify(data.menuList || '[]'))
+    //     sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
+    //     next({ ...to, replace: true })
+    //   } else {
+    sessionStorage.setItem('menuList', '[]')
+    sessionStorage.setItem('permissions', '[]')
+    next()
+    //   }
+    // }).catch((e) => {
+    //   console.log(`%c${e} 请求菜单列表和权限失败，跳转至登录页！！`, 'color:blue')
+    //   router.push({ name: 'login' })
+    // })
   }
 })
 

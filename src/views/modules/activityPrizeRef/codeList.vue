@@ -2,17 +2,18 @@
   <div class="mod-role">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
+        <el-input v-model="dataForm.roleName" placeholder="兑换码" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <!-- <el-button type="primary">新增</el-button> -->
+        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary" @click="returnLast()">返回</el-button>
       </el-form-item>
     </el-form>
     <el-table
       :data="dataList"
-      border
+      border fit highlight-current-row
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
       style="width: 100%;">
@@ -27,26 +28,19 @@
         header-align="center"
         align="center"
         width="80"
-        label="ID">
+        label="兑换码ID">
       </el-table-column>
       <el-table-column
         prop="roleName"
         header-align="center"
         align="center"
-        label="角色名称">
+        label="兑换码Code">
       </el-table-column>
       <el-table-column
         prop="remark"
         header-align="center"
         align="center"
-        label="备注">
-      </el-table-column>
-      <el-table-column
-        prop="createTime"
-        header-align="center"
-        align="center"
-        width="180"
-        label="创建时间">
+        label="版本号">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -55,8 +49,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button type="primary" size="small">详情</el-button>
+          <el-button type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -75,7 +69,8 @@
 </template>
 
 <script>
-  import AddOrUpdate from './role-add-or-update'
+  import AddOrUpdate from './activity-prize-add-or-update'
+
   export default {
     data () {
       return {
@@ -94,31 +89,29 @@
     components: {
       AddOrUpdate
     },
-    activated () {
-      this.getDataList()
-    },
+
     methods: {
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/exchange-code/sys/role/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'roleName': this.dataForm.roleName
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
+        // this.$http({
+        //   url: this.$http.adornUrl('/exchange-code/sys/role/list'),
+        //   method: 'get',
+        //   params: this.$http.adornParams({
+        //     'page': this.pageIndex,
+        //     'limit': this.pageSize,
+        //     'roleName': this.dataForm.roleName
+        //   })
+        // }).then(({data}) => {
+        //   if (data && data.code === 0) {
+        //     this.dataList = data.page.list
+        //     this.totalPage = data.page.totalCount
+        //   } else {
+            this.dataList = [{roleId:1,roleName:"eeeeee"}]
             this.totalPage = 0
-          }
+        //   }
           this.dataListLoading = false
-        })
+        // })
       },
       // 每页数
       sizeChangeHandle (val) {
@@ -134,13 +127,6 @@
       // 多选
       selectionChangeHandle (val) {
         this.dataListSelections = val
-      },
-      // 新增 / 修改
-      addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
-        })
       },
       // 删除
       deleteHandle (id) {
@@ -171,6 +157,9 @@
             }
           })
         }).catch(() => {})
+      },
+      returnLast(){
+        this.$emit('refreshDataList')
       }
     }
   }

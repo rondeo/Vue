@@ -15,14 +15,22 @@
             <icon-svg name="shoucang" class="site-sidebar__menu-icon"></icon-svg>
             <span>系统管理</span>
           </template>
-          <el-menu-item index="admin-list" @click="$router.push({ name: 'admin-list' })">
+          <el-menu-item index="prize-list" @click="$router.push({ name: 'prize-list' })">
             <icon-svg name="admin" class="site-sidebar__menu-icon"></icon-svg>
             <span slot="title">奖品管理</span>
           </el-menu-item>
-          <el-menu-item index="role-list" @click="$router.push({ name: 'role-list' })">
+          <el-menu-item index="activity-list" @click="$router.push({ name: 'activity-list' })">
             <icon-svg name="role" class="site-sidebar__menu-icon"></icon-svg>
             <span slot="title">活动管理</span>
           </el-menu-item>
+          <!-- <el-menu-item index="activity-address-list" @click="$router.push({ name: 'activity-address-list' })">
+            <icon-svg name="role" class="site-sidebar__menu-icon"></icon-svg>
+            <span slot="title">活动地址管理</span>
+          </el-menu-item> -->
+          <!-- <el-menu-item index="activity-prize-ref" @click="$router.push({ name: 'activity-prize-ref' })">
+            <icon-svg name="role" class="site-sidebar__menu-icon"></icon-svg>
+            <span slot="title">活动奖品映射</span>
+          </el-menu-item> -->
         </el-submenu>
         <!-- <sub-menu
           v-for="menu in menuList"
