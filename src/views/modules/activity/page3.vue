@@ -77,7 +77,7 @@
         width="160"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="getPrizeList(scope.row)">详情</el-button>
+          <el-button type="primary" size="small" @click="getBatchList(scope.row)">详情</el-button>
           <el-button type="success" size="small" @click="generateCode(scope.row)">生成码</el-button>
           <!-- <el-button type="danger" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button> -->
         </template>
@@ -196,7 +196,7 @@
           this.$refs.generateCode.init(this.activityId2,this.activityName2,row.prizeId,row.prizeName)
         })
       },
-       getPrizeList(row){
+       getBatchList(row){
          this.pageStatus = "batch";
          this.prizeListVisible = true;
         this.$nextTick(() => {

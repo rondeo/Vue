@@ -51,8 +51,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button type="danger" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button type="primary" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="danger" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -154,15 +154,16 @@
         var ids = id ? [id] : this.dataListSelections.map(item => {
           return item.roleId
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+        this.$confirm(`确定进行[删除]操作?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          this.$loading.open()
           this.$http({
-            url: this.$http.adornUrl('/exchange-code/sys/role/delete'),
+            url: this.$http.adornUrl('/exchange-code/activityAddress/deleteAddress?id='+id),
             method: 'post',
-            data: this.$http.adornData(ids, false)
+            data: this.$http.adornData()
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({
@@ -170,12 +171,15 @@
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.getDataList()
+                  this.getAddressList(this.activityId2,this.activityName2)
+                  this.$loading.close()
                 }
               })
             } else {
-              this.$message.error(data.msg)
+              this.$message.error(data.message)
+              this.$loading.close()
             }
+
           })
         }).catch(() => {})
       },

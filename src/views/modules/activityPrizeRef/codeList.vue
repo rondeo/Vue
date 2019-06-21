@@ -64,12 +64,12 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update> -->
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './activity-prize-add-or-update'
+  // import AddOrUpdate from './activity-prize-add-or-update'
 
   export default {
     data () {
@@ -87,7 +87,7 @@
       }
     },
     components: {
-      AddOrUpdate
+      // AddOrUpdate
     },
 
     methods: {

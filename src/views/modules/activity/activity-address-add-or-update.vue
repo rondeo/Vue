@@ -31,6 +31,7 @@ export default {
         id: 0,
         activityId: "",
         addressName: "",
+        status:null,
         remark: ""
       },
       dataRule: {
@@ -40,7 +41,7 @@ export default {
         addressName: [
           { required: true, message: "活动地址不能为空", trigger: "blur" }
         ]
-      },
+      }
     };
   },
   methods: {
@@ -55,14 +56,18 @@ export default {
       if (this.dataForm.id) {
         this.$http({
           url: this.$http.adornUrl(
-            `/exchange-code/activityAddress/getAddressDetail?${this.dataForm.id}`
+            `/exchange-code/activityAddress/getAddressDetail?id=${
+              this.dataForm.id
+            }`
           ),
           method: "get",
           params: this.$http.adornParams()
         }).then(({ data }) => {
+          debugger;
           if (data && data.code === 0) {
             this.dataForm.activityId = data.data.activityId;
             this.dataForm.addressName = data.data.addressName;
+            this.dataForm.status = data.data.status;
             this.dataForm.remark = data.data.remark;
           }
         });
@@ -72,34 +77,69 @@ export default {
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
-          this.$confirm(`确定进行[新增]操作?`, "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
-          }).then(() => {
-            this.$loading.open()
-            this.$http({
-              url: this.$http.adornUrl(`/exchange-code/activityAddress/addAddress`),
-              method: 'post',
-              data: this.$http.adornData(this.dataForm)
-            }).then(({data}) => {
-              if (data && data.code === 0) {
-                this.$message({
-                  message: '操作成功',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.visible = false
-                    this.$loading.close()
-                    this.$emit('refreshDataList')
-                  }
-                })
-              } else {
-                this.$message.error(data.message)
-                this.$loading.close()
-              }
-            })
-          });
+          if (this.dataForm.id == 0) {
+            this.$confirm(`确定进行[新增]操作?`, "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning"
+            }).then(() => {
+              this.$loading.open();
+              this.$http({
+                url: this.$http.adornUrl(
+                  `/exchange-code/activityAddress/addAddress`
+                ),
+                method: "post",
+                data: this.$http.adornData(this.dataForm)
+              }).then(({ data }) => {
+                if (data && data.code === 0) {
+                  this.$message({
+                    message: "操作成功",
+                    type: "success",
+                    duration: 1500,
+                    onClose: () => {
+                      this.visible = false;
+                      this.$loading.close();
+                      this.$emit("refreshDataList");
+                    }
+                  });
+                } else {
+                  this.$message.error(data.message);
+                  this.$loading.close();
+                }
+              });
+            });
+          } else {
+            this.$confirm(`确定进行[编辑]操作?`, "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning"
+            }).then(() => {
+              this.$loading.open();
+              this.$http({
+                url: this.$http.adornUrl(
+                  `/exchange-code/activityAddress/updateAddress`
+                ),
+                method: "post",
+                data: this.$http.adornData(this.dataForm)
+              }).then(({ data }) => {
+                if (data && data.code === 0) {
+                  this.$message({
+                    message: "操作成功",
+                    type: "success",
+                    duration: 1500,
+                    onClose: () => {
+                      this.visible = false;
+                      this.$loading.close();
+                      this.$emit("refreshDataList");
+                    }
+                  });
+                } else {
+                  this.$message.error(data.message);
+                  this.$loading.close();
+                }
+              });
+            });
+          }
         }
       });
     }
